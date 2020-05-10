@@ -26,4 +26,27 @@ public class UserDao {
         //리턴
         return user;
     }
+
+    public Integer insert(String name, String password) throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection connection =
+                DriverManager.getConnection("jdbc:mysql://localhost/jeju?serverTimezone=UTC"
+                        , "jeju", "jejupw");
+        PreparedStatement preparedStatement =
+                connection.prepareStatement("insert into userinfo (id, password) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, password);
+        preparedStatement.execute();
+
+        ResultSet resultSet = preparedStatement.getGeneratedKeys();
+        resultSet.next();
+
+        Integer id = resultSet.getInt(1);
+
+        resultSet.close();
+        preparedStatement.close();
+        connection.close();
+
+        return id;
+    }
 }

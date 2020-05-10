@@ -22,12 +22,12 @@ public class UserDaoTests {
         assertThat(user.getPassword(), is(password));
     }
 
-    public void testInsert() {
+    public void testInsert() throws SQLException, ClassNotFoundException {
         UserDao userDao = new UserDao();
         String name = "jade";
         String password = "1234";
-        User createdUser = userDao.insert(name, password);
+        Integer id = userDao.insert(name, password);
 
-        assertThat(createdUser.getId(), greaterThan(0));
+        assertThat(id, greaterThan(0));
     }
 }
