@@ -27,7 +27,7 @@ public class UserDao {
     public Integer insert(String name, String password) throws ClassNotFoundException, SQLException {
         Connection connection = getConnection();
         PreparedStatement preparedStatement =
-                connection.prepareStatement("insert into userinfo (id, password) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
+                connection.prepareStatement("insert into userinfo (name, password) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setString(1, name);
         preparedStatement.setString(2, password);
         preparedStatement.execute();
