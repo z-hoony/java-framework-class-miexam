@@ -1,6 +1,7 @@
 package kr.ac.jejunu.userdao;
 
 
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +26,7 @@ public class UserDaoTests {
     }
 
     @Test
-    public void testGet() throws SQLException, ClassNotFoundException {
+    public void testGet() throws SQLException {
         Integer id = 1;
         User user = userDao.get(id);
         assertThat(user.getId(), is(id));
@@ -34,15 +35,42 @@ public class UserDaoTests {
     }
 
     @Test
-    public void testInsert() throws SQLException, ClassNotFoundException {
+    public void testInsert() throws SQLException {
         Integer id = userDao.insert(name, password);
 
         assertThat(id, greaterThan(0));
 
         User user = userDao.get(id);
 
-        assertThat(user.getId(), is(id));
         assertThat(user.getName(), is(name));
         assertThat(user.getPassword(), is(password));
+    }
+
+    @Test
+    public void testUpdate() throws SQLException {
+        String newName = "jade";
+        String newPassword = "2345";
+
+        Integer id = userDao.insert(name, password);
+        User user = userDao.get(id);
+
+        user.setName(newName);
+        user.setPassword(newPassword);
+
+        userDao.update(user);
+
+        User updatedUser = userDao.get(id);
+
+        assertThat(updatedUser.getName(), is(newName));
+        assertThat(updatedUser.getPassword(), is(newPassword));
+    }
+
+    @Test
+    public void testDelete() throws SQLException {
+        Integer id = userDao.insert(name, password);
+        userDao.delete(id);
+
+        User deletedUser = userDao.get(id);
+        assertThat(deletedUser, IsNull.nullValue());
     }
 }
