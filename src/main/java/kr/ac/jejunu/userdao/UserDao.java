@@ -11,42 +11,90 @@ public class UserDao {
     }
 
     public User get(Integer id) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement =
-                connection.prepareStatement("select * from userinfo where id = ?");
-        preparedStatement.setLong(1, id);
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        User user;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement =
+                    connection.prepareStatement("select * from userinfo where id = ?");
+            preparedStatement.setLong(1, id);
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
 
-        User user = new User();
-        user.setId(resultSet.getInt("id"));
-        user.setName(resultSet.getString("name"));
-        user.setPassword(resultSet.getString("password"));
+            user = new User();
+            user.setId(resultSet.getInt("id"));
+            user.setName(resultSet.getString("name"));
+            user.setPassword(resultSet.getString("password"));
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
 
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-        //리턴
         return user;
     }
 
     public Integer insert(String name, String password) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        PreparedStatement preparedStatement =
-                connection.prepareStatement("insert into userinfo (name, password) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1, name);
-        preparedStatement.setString(2, password);
-        preparedStatement.execute();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        int id;
 
-        ResultSet resultSet = preparedStatement.getGeneratedKeys();
-        resultSet.next();
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("insert into userinfo (name, password) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, password);
+            preparedStatement.execute();
 
-        Integer id = resultSet.getInt(1);
+            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet.next();
 
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
+            id = resultSet.getInt(1);
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
 
         return id;
     }
