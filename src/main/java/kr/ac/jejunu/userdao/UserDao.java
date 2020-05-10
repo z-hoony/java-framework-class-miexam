@@ -10,7 +10,7 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
-    public User get(Integer id) throws ClassNotFoundException, SQLException {
+    public User get(Integer id) throws SQLException {
         Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement =
                 connection.prepareStatement("select * from userinfo where id = ?");
@@ -31,7 +31,7 @@ public class UserDao {
         return user;
     }
 
-    public Integer insert(String name, String password) throws ClassNotFoundException, SQLException {
+    public Integer insert(String name, String password) throws SQLException {
         Connection connection = dataSource.getConnection();
         PreparedStatement preparedStatement =
                 connection.prepareStatement("insert into userinfo (name, password) values (?, ?)", Statement.RETURN_GENERATED_KEYS);
