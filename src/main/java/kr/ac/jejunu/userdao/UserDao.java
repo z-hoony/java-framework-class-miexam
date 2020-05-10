@@ -1,16 +1,9 @@
 package kr.ac.jejunu.userdao;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-
 public class UserDao {
-    private final JdbcTemplate jdbcContext;
+    private final JejuJdbcTemplate jdbcContext;
 
-    UserDao(JdbcTemplate jdbcContext) {
+    UserDao(JejuJdbcTemplate jdbcContext) {
         this.jdbcContext = jdbcContext;
     }
 
@@ -32,15 +25,7 @@ public class UserDao {
     public Integer insert(String name, String password) {
         Object[] params = { name, password };
         String sql = "insert into userinfo (name, password) values (?, ?)";
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcContext.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            for (int i = 0; i < params.length; i++) {
-                preparedStatement.setObject(i + 1, params[i]);
-            }
-            return preparedStatement;
-        }, keyHolder);
-        return keyHolder.getKey().intValue();
+        return jdbcContext.insert(sql, params);
     }
 
     public void update(User user) {

@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.sql.SQLException;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
@@ -25,7 +23,7 @@ public class UserDaoTests {
     }
 
     @Test
-    public void testGet() throws SQLException {
+    public void testGet() {
         Integer id = 1;
         User user = userDao.get(id);
         assertThat(user.getId(), is(id));
@@ -34,7 +32,7 @@ public class UserDaoTests {
     }
 
     @Test
-    public void testInsert() throws SQLException {
+    public void testInsert() {
         Integer id = userDao.insert(name, password);
 
         assertThat(id, greaterThan(0));
@@ -46,7 +44,7 @@ public class UserDaoTests {
     }
 
     @Test
-    public void testUpdate() throws SQLException {
+    public void testUpdate() {
         String newName = "jade";
         String newPassword = "2345";
 
@@ -65,7 +63,7 @@ public class UserDaoTests {
     }
 
     @Test
-    public void testDelete() throws SQLException {
+    public void testDelete() {
         Integer id = userDao.insert(name, password);
         userDao.delete(id);
 
