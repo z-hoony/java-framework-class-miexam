@@ -29,5 +29,11 @@ public class UserDaoTests {
         Integer id = userDao.insert(name, password);
 
         assertThat(id, greaterThan(0));
+
+        User user = userDao.get(id);
+
+        assertThat(user.getId(), is(id));
+        assertThat(user.getName(), is(name));
+        assertThat(user.getPassword(), is(password));
     }
 }
