@@ -12,6 +12,32 @@ public class UserDao {
 
     public User get(Integer id) throws SQLException {
         Object[] objects = { id };
+        StatementStrategy statementStrategy = new GetStatementStrategy(objects);
+
+        return jdbcContextForGet(statementStrategy);
+    }
+
+    public Integer insert(String name, String password) throws SQLException {
+        Object[] objects = { name, password };
+        StatementStrategy statementStrategy = new InsertStatementStrategy(objects);
+        return jdbcContextForInsert(statementStrategy);
+    }
+
+    public void update(User user) throws SQLException {
+        Object[] objects = { user.getName(), user.getPassword(), user.getId() };
+        StatementStrategy statementStrategy = new UpdateStatementStrategy(objects);
+
+        jdbcContextForUpdate(statementStrategy);
+    }
+
+    public void delete(Integer id) throws SQLException {
+        Object[] objects = { id };
+        StatementStrategy statementStrategy = new DeleteStatementStrategy(objects);
+
+        jdbcContextForUpdate(statementStrategy);
+    }
+
+    private User jdbcContextForGet(StatementStrategy statementStrategy) throws SQLException {
         User user = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -19,7 +45,6 @@ public class UserDao {
 
         try {
             connection = dataSource.getConnection();
-            StatementStrategy statementStrategy = new GetStatementStrategy(objects);
             preparedStatement = statementStrategy.makeStatement(connection);
             resultSet = preparedStatement.executeQuery();
 
@@ -56,8 +81,7 @@ public class UserDao {
         return user;
     }
 
-    public Integer insert(String name, String password) throws SQLException {
-        Object[] objects = { name, password };
+    private Integer jdbcContextForInsert(StatementStrategy statementStrategy) throws SQLException {
         int id;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -65,7 +89,6 @@ public class UserDao {
 
         try {
             connection = dataSource.getConnection();
-            StatementStrategy statementStrategy = new InsertStatementStrategy(objects);
             preparedStatement = statementStrategy.makeStatement(connection);
             preparedStatement.execute();
 
@@ -100,42 +123,12 @@ public class UserDao {
         return id;
     }
 
-    public void update(User user) throws SQLException {
-        Object[] objects = { user.getName(), user.getPassword(), user.getId() };
+    private void jdbcContextForUpdate(StatementStrategy statementStrategy) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
 
         try {
             connection = dataSource.getConnection();
-            StatementStrategy statementStrategy = new UpdateStatementStrategy(objects);
-            preparedStatement = statementStrategy.makeStatement(connection);
-            preparedStatement.execute();
-        } finally {
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
-    }
-
-    public void delete(Integer id) throws SQLException {
-        Object[] objects = { id };
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            connection = dataSource.getConnection();
-            StatementStrategy statementStrategy = new DeleteStatementStrategy(objects);
             preparedStatement = statementStrategy.makeStatement(connection);
             preparedStatement.execute();
         } finally {
