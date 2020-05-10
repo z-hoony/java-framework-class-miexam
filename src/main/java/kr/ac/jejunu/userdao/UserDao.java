@@ -2,7 +2,7 @@ package kr.ac.jejunu.userdao;
 
 import java.sql.*;
 
-abstract public class UserDao {
+abstract public class UserDao implements ConnectionMaker {
     public User get(Integer id) throws ClassNotFoundException, SQLException {
         Connection connection = getConnection();
         PreparedStatement preparedStatement =
@@ -43,6 +43,4 @@ abstract public class UserDao {
 
         return id;
     }
-
-    abstract public Connection getConnection() throws ClassNotFoundException, SQLException;
 }
